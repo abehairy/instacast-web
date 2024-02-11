@@ -1,0 +1,65 @@
+/* Base colors */
+:root {
+  --dark-bg: #1e1e1e;
+  /* Dark background */
+  --lighter-dark-bg: #2c2c2c;
+  /* Slightly lighter than base dark background, can be used for card backgrounds or modals */
+  --primary-text: #e5e5e5;
+  /* Primary text color */
+  --secondary-text: #b0b0b0;
+  /* Secondary text color, for less prominent text */
+  --highlight: #4f8cf9;
+  /* Highlight color, like links or important text */
+  --border-color: #333;
+  /* Border color for dividers or card borders */
+}
+
+body {
+  background-color: var(--dark-bg);
+  color: var(--primary-text);
+  font-family: 'Arial', sans-serif;
+  /* Use the font of your choice */
+}
+
+a {
+  color: var(--highlight);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.card,
+.modal {
+  background-color: var(--lighter-dark-bg);
+  border: 1px solid var(--border-color);
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.secondary-text {
+  color: var(--secondary-text);
+}
+
+hr {
+  border-color: var(--border-color);
+}
+
+button,
+.btn {
+  background-color: var(--highlight);
+  color: var(--dark-bg);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover,
+.btn:hover {
+  background-color: darken(var(--highlight), 10%);
+}
+
+/* You can continue expanding this stylesheet for other elements like inputs, dropdowns, etc. */

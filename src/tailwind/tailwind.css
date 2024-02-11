@@ -1,0 +1,344 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+input[type="checkbox"]:checked+div {
+    @apply bg-gradient-purple-top;
+    @apply border-0;
+    @apply text-white;
+}
+
+input[type="checkbox"]:checked+div svg {
+    @apply block;
+}
+
+input[type="radio"]:checked+div {
+    @apply border-neutral-50;
+    @apply bg-gradient-purple-top;
+}
+
+input[type="radio"]:checked+div>div>div {
+    @apply bg-gradient-purple-top
+}
+
+.apexcharts-tooltip {
+    background: #0C1523;
+    color: "#ffffff";
+}
+
+/* Main chat container styling */
+.mx-auto {
+    /*background-color: #f6f6f6; */
+    /* Lighter background for the entire chat similar to Discord's light mode */
+}
+
+/* Message bubbles styling */
+
+.message-bubble.human {
+    background-color: #ffffff;
+}
+
+.voice-player-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 8px;
+    /* background-color: #fff; */
+    /* Adjust the color to fit your design */
+}
+
+.play-button {
+    background-color: #1D4ED8;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 10px;
+    margin-right: 16px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    outline: none;
+    flex-shrink: 0;
+    /* Prevents the button from shrinking */
+}
+
+.waveform-canvas {
+    height: 100px;
+    flex-grow: 1;
+    /* Allows the canvas to fill the space */
+    /* Add your specific styling for the waveform here */
+}
+
+.voice-message-text {
+    margin-left: 16px;
+    color: #333;
+    /* Adjust the color to fit your design */
+    flex-shrink: 1;
+    /* Allows text to shrink if needed */
+}
+
+
+/* Avatar styling */
+.avatar {
+    border-radius: 50%;
+    /* background-color: #747f8d;
+    border: 2px solid #ffffff; */
+    /* Gives a small white border to the avatar */
+}
+
+
+.input-box {
+    background-color: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e1e1e1;
+}
+
+/* Send button styling */
+.send-button {
+    background-color: #7289da;
+    /* Discord's signature bluish color for buttons */
+    color: #ffffff;
+}
+
+.send-button:hover {
+    background-color: #5b6eae;
+    /* Slightly darker shade for hover */
+}
+
+/* Existing .message styles remain */
+.message {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.message .avatar {
+    /* Add styles if necessary to position the avatar */
+    margin-right: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.message-text {
+    padding: 8px 16px;
+    border-radius: 8px;
+    max-width: calc(100% - 60px);
+    /* Account for avatar and margin */
+}
+
+.text-input-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    /* or your preferred background color */
+    z-index: 1000;
+    /* Ensures it's on top of other elements */
+    padding: 8px 16px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.text-input {
+    /* Other styles remain */
+    width: 100%;
+}
+
+.chat-container {
+    margin-top: 60px;
+    /* Adjust based on the height of your text input container */
+}
+
+.chat-content {
+    padding-bottom: 10%;
+    /* height: calc(100vh - 60px); */
+}
+
+.input-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    background-color: #fff;
+    /* To differentiate the footer */
+    z-index: 10;
+    /* To ensure it appears above other elements */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e0e0e0;
+    /* Optional: Add a border at the top */
+}
+
+/* Use a media query to target larger screens */
+@media screen and (min-width: 768px) {
+
+    /* 768px is a common breakpoint for tablets, adjust as needed */
+    .input-container {
+        left: 12%;
+    }
+}
+
+.loading-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    /* Makes it a circle */
+    background-color: #3498db;
+    /* Change color as needed */
+    animation: pulse 1.5s infinite;
+    /* Apply the pulse animation */
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        /* Start at normal size */
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.5);
+        /* Enlarge the dot */
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(1);
+        /* Return to normal size */
+        opacity: 1;
+    }
+}
+
+
+
+
+/* styles.css */
+
+.graph-chat-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.graph-component {
+    flex: 2;
+    min-width: 50%;
+    /* This ensures that on larger screens, it takes at least half the space */
+}
+
+.chat-component {
+    flex: 1;
+    display: none;
+    /* Chat will be hidden by default */
+    min-width: 50%;
+}
+
+@media (max-width: 768px) {
+
+    /* This media query will stack components on screens 768px or smaller */
+    .graph-chat-container {
+        flex-direction: column;
+    }
+
+    .chat-component,
+    .graph-component {
+        min-width: 100%;
+    }
+}
+
+.chat-visible {
+    display: block;
+}
+
+.bg-gradient-healthcare {
+    background-image: linear-gradient(90deg, #003366 0%, #004c8c 25%, #0073e6 50%, #0099cc 75%, #00bfff 100%);
+}
+
+/** Dark mode **/
+/* Background */
+
+.dark body {
+    @apply bg-gray-900;
+}
+
+.dark section {
+    @apply bg-gray-900;
+}
+
+/* Text Color */
+
+
+.dark body {
+    @apply text-gray-300;
+}
+
+/* Card or Message Bubbles */
+
+
+.dark .card,
+.dark .message-bubble {
+    @apply bg-gray-800;
+}
+
+/* Navbar/Header */
+
+.dark .navbar {
+    @apply bg-blue-900 text-gray-200;
+}
+
+
+/* Links */
+.dark a {
+    @apply text-blue-400;
+}
+
+.dark a:hover {
+    @apply text-blue-200;
+}
+
+/* Primary Button */
+
+.dark .btn-primary {
+    @apply bg-blue-800;
+}
+
+/* Secondary Button */
+
+.dark .btn-secondary {
+    @apply bg-gray-700 text-gray-300;
+}
+
+/* Form Inputs */
+
+.dark .input-field {
+    @apply bg-gray-800 text-gray-300 border-gray-700;
+}
+
+/* Sidebar/Menu */
+
+
+.dark .sidebar,
+.dark .sidebar-container {
+    @apply bg-gray-900 text-gray-300;
+}
+
+
+
+.sidebar,
+.sidebar-container {
+    @apply bg-white
+}
+
+/* Icons */
+
+.dark .icon {
+    @apply text-gray-400;
+}
+
+/* Other components, buttons, etc. can also be styled similarly using the `dark:` variant. */
