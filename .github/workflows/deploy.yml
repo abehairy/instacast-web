@@ -1,0 +1,26 @@
+name: Deploy React Application
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build
+      run: |
+        npm ci
+        npm run build
+
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_KEY }}
+
+    - name: Sync files
+      run: |
+        rsync -avz --delete ./build/ root@${{ secrets.HOST }}:/var/www/instacast.live
