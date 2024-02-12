@@ -13,23 +13,27 @@ export default function Demo() {
   const [animationStep, setAnimationStep] = useState(0);
   const [podcastSaved, setpodcastSaved] = useState(false);
 
-  const [podcastID, setPodcastID] = useState();
-  const [podcastIntro, setPodcastIntro] = useState();
+  const [sessionID, setSessionID] = useState();
+  const [podcast, setPodcast] = useState();
+  const [podcasts, setPodcasts] = useState([])
 
-  const startPodcast = () => {
+  const startPodcast = (podcast) => {
+    if (!podcast.id)
+      return
 
     setAnimationStep(1); // Start the animation
     setTimeout(() => setAnimationStep(2), 2000); // Change text after 2 seconds
+    setTimeout(() => setAnimationStep(3), 4000); // Change text after another 2 seconds
 
     setIsDataLoading(true)
 
-    const response = callApi("/podcast/start");
+    const response = callApi("/podcast/start?podcast_id=" + podcast.id);
     response.then(e => {
-      setTimeout(() => setAnimationStep(3), 4000); // Change text after another 2 seconds
       setTimeout(() => setAnimationStep(0), 6000); // Reset or start the podcast after another 2 seconds
 
-      setPodcastID(e.podcast_id)
-      setPodcastIntro(e)
+      setSessionID(e.session_id)
+      podcast.introText = e.text
+      setPodcast(podcast)
       setIsDataLoading(false)
 
     })
@@ -38,15 +42,10 @@ export default function Demo() {
 
   const savePodcast = () => {
 
-    // setAnimationStep(1); // Start the animation
-    // setTimeout(() => setAnimationStep(2), 2000); // Change text after 2 seconds
-
     setIsDataLoading(true)
 
-    const response = callApi("/podcast/save?podcast_id=" + podcastID);
+    const response = callApi("/podcast/save?session_id=" + sessionID);
     response.then(e => {
-      // setTimeout(() => setAnimationStep(3), 4000); // Change text after another 2 seconds
-      // setTimeout(() => setAnimationStep(0), 6000); // Reset or start the podcast after another 2 seconds
       setpodcastSaved(true)
       setIsDataLoading(false)
 
@@ -54,97 +53,26 @@ export default function Demo() {
 
   }
 
-  const handleRecordingComplete = (file) => {
-    console.log(file)
+  const getPodcasts = () => {
 
     setIsDataLoading(true)
-    const formData = new FormData();
-    formData.append('file', file); // For now, let's assume we're only uploading a single file
 
-    const response = uploadFile("/podcast/speak",
-      formData,
-      { app: '' }
-    );
-
+    const response = callApi("/podcast/list");
     response.then(e => {
-      // setFhirResponse(e)
+      setPodcasts(e)
       setIsDataLoading(false)
 
     })
 
-
-
-
   }
 
+  useEffect(() => {
 
-  const prompts = [
-    {
-      'name': 'The InnerView Podcast',
-      'id': 'storytelling',
-      'hostName': 'Alloy',
-      'description': 'Share your personal or fictional stories and captivate listeners with your narrative skills.',
-      'icon': '/dashy-assets/images/innerview-thumbnail.png',
-      'hostImage': '/dashy-assets/images/host1.png',
-    },
-    {
-      'name': 'Adventure Time',
-      'id': 'life-lessons',
-      'hostName': 'Alloy',
+    getPodcasts()
 
-      'description': 'Bedtime stories and beyond.',
-      'icon': '/dashy-assets/images/adventure-host.png',
-      'hostImage': '/dashy-assets/images/host1.png',
-    },
-    {
-      'name': 'Tech Talk',
-      'id': 'tech-talk',
-      'hostName': 'Alloy',
-
-      'description': 'Dive into the latest in technology, from gadgets to software, and what the future may hold.',
-
-      'icon': '/dashy-assets/images/tech-thumbnail.png',
-      'hostImage': '/dashy-assets/images/tech-host.png',
-    },
-    {
-      'name': 'Health & Wellness',
-      'id': 'health-wellness',
-      'description': 'Explore topics on health, wellness, fitness, and mental well-being with experts and enthusiasts.',
-
-      'icon': '/dashy-assets/images/wellness-thumbnail.png',
-      'hostImage': '/dashy-assets/images/wellness-host.png',
-      'hostName': 'Ted'
-    }
-  ];
+  }, []);
 
 
-
-
-  const handleChatResponse = (data) => {
-    // Check if data is not empty and is a string
-    if (typeof data === 'string' && data.trim() !== '') {
-      // Regular expression to find the Mermaid syntax
-      const mermaidRegex = /```mermaid([^`]+)```/;
-
-      // Extract the Mermaid syntax using the regular expression
-      const mermaidMatch = data.match(mermaidRegex);
-
-      if (mermaidMatch && mermaidMatch[1]) {
-        // Extracted Mermaid syntax
-        const mermaidSyntax = mermaidMatch[1].trim();
-
-        // Set the chart here using your state management or any other method
-        setChart(mermaidSyntax); // Replace 'setChart' with your method or state setter
-        setIsResponseReceived(true)
-        //generateImage(data)
-        return data.replace(mermaidRegex, '').trim();
-      } else {
-        console.log("No valid Mermaid syntax found in the response.");
-      }
-    } else {
-      console.log("Invalid data received in handleChatResponse");
-    }
-  }
 
 
 
@@ -171,33 +99,33 @@ export default function Demo() {
               <p className="text-gray-500">AI Host to Share Your Story With The World</p>
             </div>
           </div>
-          <div>
+          {/* <div>
             <a href="https://twitter.com/messages/compose?recipient_id=3435143933" target="_blank" rel="noopener noreferrer"
               className="inline-block bg-black text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50 transition ease-in-out duration-150">
               Get Early Access
             </a>
-          </div>
+          </div> */}
         </div>
       </header>
 
 
 
-      {!podcastID && !animationStep && (
+      {!sessionID && !animationStep && (
         <div className="relative pt-16 md:pt-24">
           <div className="container mx-auto text-center p-8">
             <div className="grid md:grid-cols-2 gap-4">
-              {prompts.map((prompt, index) => (
+              {podcasts.map((podcast, index) => (
                 <div class="bg-white p-4 rounded-lg border hover:opacity-80 border-black hover:border-4 hover:border-black-400">
-                  <a onClick={() => startPodcast(prompt.name)} href="#" className="flex flex-col items-center space-y-4">
-                    <img src={prompt.icon} alt={prompt.name} className="w-full h-48 object-cover rounded-t-lg" />
+                  <a onClick={() => startPodcast(podcast)} href="#" className="flex flex-col items-center space-y-4">
+                    <img src={podcast.icon} alt={podcast.name} className="w-full h-48 object-cover rounded-t-lg" />
                     <div className="flex items-center w-full">
                       <div style={{ flex: 1 }}>
-                        <h3 className="text-lg font-semibold">{prompt.name}</h3>
-                        <p className="text-xs text-gray-500" style={{}}>Hosted By AI <b>{prompt.hostName}</b></p>
+                        <h3 className="text-lg font-semibold">{podcast.name}</h3>
+                        <p className="text-xs text-gray-500" style={{}}>Hosted By AI <b>{podcast.hostName}</b></p>
                       </div>
-                      <img src={prompt.hostImage} alt="AI Host: Alloy" className="w-10 h-10 rounded-full mr-4" />
+                      <img src={podcast.hostImage} alt="AI Host: Alloy" className="w-10 h-10 rounded-full mr-4" />
                     </div>
-                    <p className="text-sm text-gray-600">{prompt.description}</p>
+                    <p className="text-sm text-gray-600">{podcast.description}</p>
                     <button disabled={isDataLoading} onClick={startPodcast} className="mt-8 py-3 px-4 text-sm text-white bg-black rounded-lg transition duration-300 w-40 h-13 font-medium">
                       <h2 className="text-lg">{!isDataLoading ? 'Start Podcast' : ''}</h2>
                       <Radio
@@ -240,33 +168,42 @@ export default function Demo() {
 
 
       {
-        podcastID && !animationStep && (
+        sessionID && !animationStep && (
           <div className="relative pt-16 md:pt-24">
             <div className="container mx-auto text-center p-8">
               <div className="grid md:grid-cols-2 gap-4">
 
-                <StudioComponent podcastIntro={podcastIntro} podcastID={podcastID} />
-                <div className="flex flex-col w-full relative">
-                  <div className="chat-content flex flex-col mx-auto w-full min-h-[75vh] 2xl:min-h-[85vh] max-w-6xl">
-                    <div class="container mx-auto text-center p-8 bg-white p-4 rounded-lg border hover:border-gray-400 ">
+                <StudioComponent podcast={podcast} sessionID={sessionID} />
+                <div className="flex flex-col items-center w-full">
+                  {/* Podcast card container */}
+                  <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
 
+                    {/* Podcast image/artwork */}
+                    <img src={podcast.icon} alt="Podcast Artwork" className="w-full h-64 object-cover rounded-lg" />
 
-                      {podcastSaved && <VoicePlayer audioUrl={apiUrl + '/podcast/file?podcast_id=' + podcastID + '&uuid=final_compilation'} />}
-                      <a href={apiUrl + '/podcast/file?podcast_id=' + podcastID + '&uuid=final_compilation'} download={''} className="download-button">
-                        <button type="button">
-                          Download MP3
-                        </button>
-                      </a>
-                      <button disabled={isDataLoading} onClick={savePodcast} className="mt-8 py-3 px-4 text-sm text-white bg-black rounded-lg transition duration-300 w-40 h-13 font-medium">
-                        <h2 className="text-lg">{!isDataLoading ? 'Save Podcast' : ''}</h2>
-                        <Radio
-                          visible={isDataLoading}
-                          colors={['#ffff', '#ffff', '#ffff']}
-                          width="50"
-                          height="50"
-                          wrapperStyle={{ 'display': 'inline-block' }}
-                        />
+                    {/* Podcast details */}
+                    <div className="mt-4">
+                      <h3 className="text-xl font-semibold">{podcast.name}</h3>
+                      <p className="text-sm text-gray-600">Hosted by {podcast.hostName}</p>
+                    </div>
+
+                    {podcastSaved && <VoicePlayer audioUrl={apiUrl + '/podcast/file?session_id=' + sessionID + '&uuid=final_compilation'} />}
+
+                    {/* Podcast buttons */}
+                    <div className="mt-4 flex space-x-2 justify-center">
+                      {/* Save podcast button */}
+                      <button onClick={savePodcast} className={`py-2 px-4 text-sm text-white bg-black rounded-lg transition duration-300 font-medium ${isDataLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700'}`} disabled={isDataLoading}>
+                        {isDataLoading ? (
+                          <Radio visible={true} colors={['#ffff', '#ffff', '#ffff']} width="50" height="50" wrapperStyle={{ display: 'inline-block' }} />
+                        ) : (
+                          'Save Podcast'
+                        )}
                       </button>
+
+                      {/* Download button */}
+                      <a href={`${apiUrl}/podcast/file?session_id=${sessionID}&uuid=final_compilation`} download="podcast.mp3" className="py-2 px-4 text-sm text-white bg-blue-500 rounded-lg transition duration-300 font-medium hover:bg-blue-600">
+                        Download MP3
+                      </a>
                     </div>
                   </div>
                 </div>

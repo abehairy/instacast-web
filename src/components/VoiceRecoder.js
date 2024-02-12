@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
 
 const VoiceToFHIRComponent = (props) => {
   const audioContext = useRef(null);
@@ -6,6 +8,7 @@ const VoiceToFHIRComponent = (props) => {
   const dataArray = useRef(null);
   const requestRef = useRef(null);
   const canvasRef = useRef(null);
+  const [mimeType, setMimeType] = useState('');
 
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
@@ -61,16 +64,21 @@ const VoiceToFHIRComponent = (props) => {
     }
 
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      // if (!analyser.current) {
-      //   analyser.current = audioContext.current.createAnalyser();
-      //   dataArray.current = new Uint8Array(analyser.current.frequencyBinCount);
-      // }
 
-      // const source = audioContext.current.createMediaStreamSource(stream);
-      // source.connect(analyser.current);
 
-      // Start the MediaRecorder here
-      const newMediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      // Determine the supported mimeType
+      let selectedMimeType = 'audio/mp4'; // Default mimeType
+      if (MediaRecorder.isTypeSupported('audio/webm')) {
+        selectedMimeType = 'audio/webm';
+      } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+        selectedMimeType = 'audio/mp4';
+      } else {
+        alert('Neither audio/webm nor audio/mp4 is supported. Falling back to default mimeType.');
+      }
+      setMimeType(selectedMimeType); // Store the selected MIME type
+
+
+      const newMediaRecorder = new MediaRecorder(stream, { mimeType: selectedMimeType });
       newMediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           recordedChunks.push(event.data);
@@ -81,6 +89,8 @@ const VoiceToFHIRComponent = (props) => {
       setMediaRecorder(newMediaRecorder);
       //draw();
       setIsRecording(true);
+    }).catch(e => {
+      //alert(JSON.stringify(e))
     });
   };
 
@@ -98,9 +108,10 @@ const VoiceToFHIRComponent = (props) => {
     mediaRecorder.stream.getTracks().forEach(track => track.stop()); // Stop the media stream
 
     mediaRecorder.onstop = () => {
-      const audioBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+      const audioBlob = new Blob(recordedChunks, { type: mimeType });
       if (audioBlob.size > 0) {
-        const audioFile = new File([audioBlob], "recording.webm", { type: 'audio/webm' });
+        const extension = mimeType.split('/')[1]
+        const audioFile = new File([audioBlob], "recording." + extension, { type: mimeType });
         props.onRecordingComplete(audioFile);  // Pass the audio file to the parent component
       }
       setRecordedChunks([]);
@@ -124,37 +135,23 @@ const VoiceToFHIRComponent = (props) => {
   }, [isRecording]);
 
   return (
-    <div>
-      <canvas className="w-full h-32 bg-transparent" ref={canvasRef} hidden></canvas>
-      <div className="flex justify-center">
+
+    <div className="relative w-full flex justify-center items-center" >
+      {/* Other content of the container goes here */}
+      <div className="bottom-0 mb-10">
         <button
           onClick={toggleRecording}
-          className={`px-4 py-2 rounded-full text-white ${isRecording ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'} disabled:bg-blue-300`}
+          className="flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition duration-300 ease-in-out focus:outline-none"
+          style={{ boxShadow: '0 4px 10px rgba(0, 0, 0, 0.25)' }}
           aria-label={isRecording ? 'Stop Recording' : 'Start Recording'}
         >
+          <FontAwesomeIcon icon={faMicrophone} className="mr-2" />
           {isRecording ? 'Stop' : 'Start'} Recording
         </button>
       </div>
+      {/* Rest of the content */}
     </div>
-    // <div>
-    //   <canvas className="w-full h-32 bg-transparent" ref={canvasRef}></canvas>
-    //   <div className="flex justify-center space-x-4 mt-4">
-    //     <button
-    //       onClick={startRecording}
-    //       disabled={isRecording}
-    //       className="px-4 py-2 rounded-md text-white bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300"
-    //     >
-    //       Start Recording
-    //     </button>
-    //     <button
-    //       onClick={stopRecording}
-    //       disabled={!isRecording}
-    //       className="px-4 py-2 rounded-md text-white bg-red-500 hover:bg-red-600 disabled:bg-red-300"
-    //     >
-    //       Stop Recording
-    //     </button>
-    //   </div>
-    // </div>
+
   );
 
 };

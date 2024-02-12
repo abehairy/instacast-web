@@ -52,17 +52,19 @@ input[type="radio"]:checked+div>div>div {
 }
 
 .play-button {
-    background-color: #1D4ED8;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    padding: 10px;
-    margin-right: 16px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-    cursor: pointer;
-    outline: none;
-    flex-shrink: 0;
-    /* Prevents the button from shrinking */
+    @apply bg-black text-white border-none rounded-full p-2 mr-4 cursor-pointer outline-none;
+    width: 48px;
+    /* Set a fixed width */
+    height: 48px;
+    /* Set the height equal to the width to form a circle */
+    box-sizing: border-box;
+    /* Include padding and border in the width and height */
+    display: flex;
+    /* Use flexbox to center the icon */
+    align-items: center;
+    /* Center the icon vertically */
+    justify-content: center;
+    /* Center the icon horizontally */
 }
 
 .waveform-canvas {

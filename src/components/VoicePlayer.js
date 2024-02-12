@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlay, faStop } from '@fortawesome/free-solid-svg-icons';
 
 const VoicePlayerComponent = ({ audioUrl, audioFile }) => {
   const audioContext = useRef(null);
@@ -7,6 +9,8 @@ const VoicePlayerComponent = ({ audioUrl, audioFile }) => {
   const requestRef = useRef(null);
   const canvasRef = useRef(null);
   const [audioBuffer, setAudioBuffer] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const sourceRef = useRef(null); // Reference to the audio source node
 
   const drawPlaceholderWaveform = () => {
     const canvas = canvasRef.current;
@@ -62,6 +66,9 @@ const VoicePlayerComponent = ({ audioUrl, audioFile }) => {
     requestRef.current = requestAnimationFrame(draw);
   };
 
+  const autoStart = () => {
+    document.getElementsByClassName('play-button')[0].click()
+  }
   useEffect(() => {
     if (!audioContext.current) {
       audioContext.current = new (window.AudioContext || window.webkitAudioContext)();
@@ -84,6 +91,7 @@ const VoicePlayerComponent = ({ audioUrl, audioFile }) => {
           .then(decodedAudio => {
             setAudioBuffer(decodedAudio);
             drawPlaceholderWaveform(); // Draw the placeholder waveform
+
           });
       };
       reader.readAsArrayBuffer(audioFile);
@@ -102,23 +110,47 @@ const VoicePlayerComponent = ({ audioUrl, audioFile }) => {
   const playAudio = () => {
     if (audioBuffer && audioContext.current) {
       const source = audioContext.current.createBufferSource();
+      sourceRef.current = source; // Assign the source to the ref
       source.buffer = audioBuffer;
       analyser.current = audioContext.current.createAnalyser();
       dataArray.current = new Uint8Array(analyser.current.frequencyBinCount);
       source.connect(analyser.current);
       analyser.current.connect(audioContext.current.destination);
+
+
+      source.onended = () => {
+        setIsPlaying(false); // Update the state when the audio ends
+      };
       source.start();
+      setIsPlaying(true); // Update the state to indicate the audio is playing
       draw();
     }
   };
+  const stopAudio = () => {
+    if (isPlaying) {
+      sourceRef.current.stop(); // Stop the audio source
+      setIsPlaying(false); // Update the state to indicate the audio is not playing
+    }
+  };
+  const togglePlayStop = () => {
+    if (isPlaying) {
+      stopAudio();
+    } else {
+      playAudio();
+    }
+  };
+
 
   return (
     <div className="voice-player-container">
-      <button onClick={playAudio} className="play-button">
+      <button onClick={togglePlayStop} className="play-button">
+        <FontAwesomeIcon icon={isPlaying ? faStop : faPlay} />
+      </button>
+      {/* <button onClick={playAudio} className="play-button">
         <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
           <polygon points="5 3 19 12 5 21 5 3"></polygon>
         </svg>
-      </button>
+      </button> */}
       <canvas ref={canvasRef} className="waveform-canvas"></canvas>
     </div>
     // <div className="relative inline-block">
