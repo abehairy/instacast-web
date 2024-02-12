@@ -6,8 +6,10 @@ import VoicePlayer from "../components/VoicePlayer";
 
 
 export default function Demo() {
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const [isDataLoading, setIsDataLoading] = useState(false);
-  const { callApi, uploadFile } = useApi('demo');
+  const { callApi, uploadFile } = useApi();
   const [animationStep, setAnimationStep] = useState(0);
   const [podcastSaved, setpodcastSaved] = useState(false);
 
@@ -249,8 +251,8 @@ export default function Demo() {
                     <div class="container mx-auto text-center p-8 bg-white p-4 rounded-lg border hover:border-gray-400 ">
 
 
-                      {podcastSaved && <VoicePlayer audioUrl={'http://0.0.0.0:8000/podcast/file?podcast_id=' + podcastID + '&uuid=final_compilation'} />}
-                      <a href={'http://0.0.0.0:8000/podcast/file?podcast_id=' + podcastID + '&uuid=final_compilation'} download={''} className="download-button">
+                      {podcastSaved && <VoicePlayer audioUrl={apiUrl + '/podcast/file?podcast_id=' + podcastID + '&uuid=final_compilation'} />}
+                      <a href={apiUrl + '/podcast/file?podcast_id=' + podcastID + '&uuid=final_compilation'} download={''} className="download-button">
                         <button type="button">
                           Download MP3
                         </button>

@@ -8,6 +8,7 @@ import VoiceRecoder from "./VoiceRecoder";
 
 export default function ChatComponent({ podcastID, podcastIntro, ...props }) {
   const [messages, setMessages] = useState([{ type: 'ai', content: podcastIntro.text, voice_id: 'intro' }]);
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   const [inputCode, setInputCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -138,21 +139,6 @@ export default function ChatComponent({ podcastID, podcastIntro, ...props }) {
 
   }
 
-  const getHistory = async () => {
-    try {
-      const response = await fetch('http://0.0.0.0:8000/api/companion/chat/history');
-      const data = await response.json();
-
-      // Assuming the API returns an array of messages
-      if (Array.isArray(data)) {
-        setMessages(data);
-      } else {
-        console.error('Expected the API to return an array of messages, but got:', data);
-      }
-    } catch (error) {
-      console.error('Failed to fetch chat history:', error);
-    }
-  };
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
@@ -219,7 +205,7 @@ export default function ChatComponent({ podcastID, podcastIntro, ...props }) {
               <div className="flex-grow flex items-center">
                 {message.type === 'ai' && !message.content && <div className="loading-dot"></div>}
                 <span className="text-navy-700 font-semibold text-sm md:text-md leading-6 md:leading-6" style={{ whiteSpace: 'pre-wrap' }}>{message.content}
-                  {message.voice_id && <VoicePlayer audioUrl={'http://0.0.0.0:8000/podcast/file?podcast_id=' + podcastID + '&uuid=' + message.voice_id} />}
+                  {message.voice_id && <VoicePlayer audioUrl={apiUrl + '/podcast/file?podcast_id=' + podcastID + '&uuid=' + message.voice_id} />}
                   {message.voice_file && <VoicePlayer audioFile={message.voice_file} />}
 
                 </span>
