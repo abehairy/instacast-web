@@ -9,7 +9,7 @@ export default function Demo() {
   const apiUrl = process.env.REACT_APP_API_URL;
 
   const [isDataLoading, setIsDataLoading] = useState(false);
-  const { callApi, uploadFile } = useApi();
+  const { callApi, uploadFile } = useApi(true);
   const [animationStep, setAnimationStep] = useState(0);
   const [podcastSaved, setpodcastSaved] = useState(false);
 

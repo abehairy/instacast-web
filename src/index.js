@@ -13,7 +13,8 @@ const appBaseUrl = process.env.REACT_APP_APP_BASE_URL;
 root.render(
     <React.StrictMode>
         <BrowserRouter>
-            <Auth0Provider
+            <App />
+            {/* <Auth0Provider
                 domain="dev-71wv0ibtf0gs5dv1.us.auth0.com"
                 clientId="nMFfc6vkcBgRj7bqrAySOjtOwPW3PRdL"
                 authorizationParams={{
@@ -22,7 +23,7 @@ root.render(
                 }}
             >
                 <App />
-            </Auth0Provider>
+            </Auth0Provider> */}
         </BrowserRouter>
     </React.StrictMode >
 );

@@ -1,7 +1,8 @@
 import { useAuth0 } from "@auth0/auth0-react";
 
 export function useApi(publicapi) {
-  const { getAccessTokenSilently } = useAuth0();
+  let { getAccessTokenSilently } = {}
+  if (!publicapi) getAccessTokenSilently = useAuth0();
   const apiBaseUrl = process.env.REACT_APP_API_URL;
 
   const callApi = async (endpoint, options = {}, body = null, queryParams = {}) => {
