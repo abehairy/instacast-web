@@ -5,7 +5,6 @@ import { MdAttachFile } from 'react-icons/md';
 import FileUploader from './FileUploader';
 import VoicePlayer from "./VoicePlayer";
 import VoiceRecoder from "./VoiceRecoder";
-import { Puff } from 'react-loader-spinner'
 
 export default function ChatComponent({ podcast, sessionID, ...props }) {
   const [messages, setMessages] = useState([{ type: 'ai', content: podcast.introText, voice_id: 'intro' }]);
@@ -41,12 +40,13 @@ export default function ChatComponent({ podcast, sessionID, ...props }) {
 
     response.then(e => {
       setMessages(prevMessages => [...prevMessages, { type: 'ai', content: e.text, voice_id: e.voice_id }]);
-
-      console.log(e)
       setLoading(false)
+      props.didInteract(true)
+      console.log(e)
+
 
     }).catch(e => {
-      alert(JSON.stringify(e))
+      //alert(JSON.stringify(e))
     })
 
 
@@ -108,20 +108,11 @@ export default function ChatComponent({ podcast, sessionID, ...props }) {
         <div className={`${props.textInputCss || ''} flex flex-col mt-5 ml-[15px] xl:ml-15 justify-self-end`}>
           <div className="flex justify-between items-center mb-2 w-full">
 
-            {loading && (<Puff
-              visible={true}
-              height="80"
-              width="80"
-              color="#4fa94d"
-              ariaLabel="puff-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
-            />)}
-            {!loading && (<VoiceRecoder onRecordingComplete={handleRecordingComplete} />)}
+            <VoiceRecoder loading={loading} onRecordingComplete={handleRecordingComplete} />
 
           </div>
 
-          <div className="flex text-white justify-center flex-col md:flex-row items-center mt-2">
+          {/* <div className="flex text-white justify-center flex-col md:flex-row items-center mt-2">
             <span className="text-xs text-center text-white">
               AI Host may produce inaccurate information
               about people, places, or facts.
@@ -129,7 +120,7 @@ export default function ChatComponent({ podcast, sessionID, ...props }) {
             <span className="text-xs text-navy-700 font-medium underline">
               InstaCast Nov 12 Version
             </span>
-          </div>
+          </div> */}
         </div>
 
 

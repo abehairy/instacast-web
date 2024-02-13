@@ -9,26 +9,21 @@ import Ask from './pages/Ask';
 import AppList from './pages/AppsList';
 import AppSetup from './pages/AppSetup';
 import NotFoundPage from './pages/NotFoundPage';
-
-
 import Landing from './pages/Landing';
 import Demo from './pages/Demo';
+import Preview from './pages/Preview';
 
 function App() {
   return (
     <HelmetProvider>
       <Routes>
         <Route path="/" element={<Demo />} />
-
+        <Route path="/preview/:podcastID/:sessionID" element={<Preview />} />
         <Route path="/landing" element={<Landing />} />
-        {/* <Route path="/demo" element={<ProtectedRoute><Demo /></ProtectedRoute>} /> */}
         <Route path="/demo" element={<Demo />} />
-
-
         <Route path="/ask" element={<ProtectedRoute><Ask /></ProtectedRoute>} />
         <Route path="/apps" element={<ProtectedRoute><AppList /></ProtectedRoute>} />
         <Route path="/apps/:app/:action/:sub" element={<AppSetup />} />
-        {/* Catch all other routes */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </HelmetProvider>

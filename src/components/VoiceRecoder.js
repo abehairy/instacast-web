@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
+import { Radio } from 'react-loader-spinner';
 
-const VoiceToFHIRComponent = (props) => {
+const VoiceToFHIRComponent = ({ loading, ...props }) => {
   const audioContext = useRef(null);
   const analyser = useRef(null);
   const dataArray = useRef(null);
@@ -140,13 +141,22 @@ const VoiceToFHIRComponent = (props) => {
       {/* Other content of the container goes here */}
       <div className="bottom-0 mb-10">
         <button
+          disabled={loading}
           onClick={toggleRecording}
           className="flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition duration-300 ease-in-out focus:outline-none"
           style={{ boxShadow: '0 4px 10px rgba(0, 0, 0, 0.25)' }}
           aria-label={isRecording ? 'Stop Recording' : 'Start Recording'}
         >
-          <FontAwesomeIcon icon={faMicrophone} className="mr-2" />
-          {isRecording ? 'Stop' : 'Start'} Recording
+          {loading ? (
+            <Radio visible={true} colors={['#ffff', '#ffff', '#ffff']} width="50" height="50" wrapperStyle={{ display: 'inline-block' }} />
+          ) : (
+            <span>
+              <FontAwesomeIcon icon={faMicrophone} className="mr-2" />
+              {isRecording ? 'Stop' : 'Start'} Recording
+            </span>
+
+          )}
+
         </button>
       </div>
       {/* Rest of the content */}
